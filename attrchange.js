@@ -2,10 +2,7 @@
 A simple jQuery function that can add listeners on attribute change.
 http://meetselva.github.io/attrchange/
 
-About License:
-Copyright (C) 2013 Selvakumar Arumugam
-You may use attrchange plugin under the terms of the MIT Licese.
-https://github.com/meetselva/attrchange/blob/master/MIT-License.txt
+Customised
 */
 (function($) {
    function isDOMAttrModifiedSupported() {
@@ -53,7 +50,8 @@ https://github.com/meetselva/attrchange/blob/master/MIT-License.txt
 	   
 		var cfg = {
 			trackValues: false,
-			callback: $.noop
+			callback: $.noop,
+			context: this
 		};
 		
 		//for backward compatibility
@@ -99,7 +97,7 @@ https://github.com/meetselva/attrchange/blob/master/MIT-License.txt
 						e.newValue = $(_this).attr(e.attributeName);
 					}
 					
-					cfg.callback.call(_this, e);
+					cfg.callback.call(_this, e, cfg.context);
 				});
 			});
 	
@@ -113,14 +111,14 @@ https://github.com/meetselva/attrchange/blob/master/MIT-License.txt
 				if (event.originalEvent) event = event.originalEvent; //jQuery normalization is not required for us 
 				event.attributeName = event.attrName; //property names to be consistent with MutationObserver
 				event.oldValue = event.prevValue; //property names to be consistent with MutationObserver 
-				cfg.callback.call(this, event);
+				cfg.callback.call(this, event, cfg.context);
 			});
 		} else if ('onpropertychange' in document.body) { //works only in IE		
 			return this.on('propertychange', function(e) {
 				e.attributeName = window.event.propertyName;
 				//to set the attr old value
-				checkAttributes.call($(this), cfg.trackValues , e);
-				cfg.callback.call(this, e);
+				checkAttributes.call($(this), cfg.trackValues , e, cfg.context);
+				cfg.callback.call(this, e, cfg.context);
 			});
 		}
 
